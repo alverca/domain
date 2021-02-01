@@ -13,7 +13,6 @@ async function main() {
     console.log('deleting...createdThrough:', createdThrough);
 
     const reportRepo = new domain.repository.Report(mongoose.connection);
-    const performanceRepo = new domain.repository.Performance(mongoose.connection);
 
     let result;
 
@@ -22,12 +21,6 @@ async function main() {
     })
         .exec();
     console.log('aggregateSales deleted', result);
-
-    result = await performanceRepo.performanceModel.deleteMany({
-        created_at: { $lt: createdThrough }
-    })
-        .exec();
-    console.log('performances deleted', result);
 
     // await mongoose.disconnect();
 }

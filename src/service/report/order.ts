@@ -1,8 +1,8 @@
 /**
  * 売上レポートサービス
  */
+import * as factory from '@alverca/factory';
 import * as cinerinoapi from '@cinerino/sdk';
-import * as factory from '@tokyotower/factory';
 import * as moment from 'moment-timezone';
 import * as util from 'util';
 

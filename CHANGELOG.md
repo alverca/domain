@@ -18,6 +18,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v51.0.0 - 2021-02-01
+
+### Changed
+
+- @alverca/factoryで再構築
+
+### Removed
+
+- パフォーマンスリポジトリを削除
+
 ## v50.0.0 - 2021-01-21
 
 ### Changed

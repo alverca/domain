@@ -1,5 +1,5 @@
 
-const ttts = require('../lib/index');
+const alverca = require('../lib/index');
 const moment = require('moment-timezone');
 const mongoose = require('mongoose');
 const util = require('util');
@@ -7,7 +7,7 @@ const util = require('util');
 async function main() {
     await mongoose.connect(process.env.MONGOLAB_URI);
 
-    const reportRepo = new ttts.repository.Report(mongoose.connection);
+    const reportRepo = new alverca.repository.Report(mongoose.connection);
 
     const cursor = await reportRepo.aggregateSaleModel.find(
         {
