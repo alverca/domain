@@ -1,11 +1,11 @@
 
-const ttts = require('../lib/index');
+const alverca = require('../lib/index');
 const mongoose = require('mongoose');
 
 async function main() {
     await mongoose.connect(process.env.MONGOLAB_URI);
 
-    const reportRepo = new ttts.repository.Report(mongoose.connection);
+    const reportRepo = new alverca.repository.Report(mongoose.connection);
 
     const result = await reportRepo.aggregateSaleModel.updateMany(
         { _id: { $exists: true } },

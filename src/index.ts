@@ -3,7 +3,7 @@
  */
 import * as OrderReportService from './service/report/order';
 
-import * as factory from '@tokyotower/factory';
+import * as factory from '@alverca/factory';
 
 import * as repository from './repository';
 

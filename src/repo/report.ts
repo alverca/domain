@@ -1,4 +1,4 @@
-import * as factory from '@tokyotower/factory';
+import * as factory from '@alverca/factory';
 
 import { Connection } from 'mongoose';
 import AggregateSaleModel from './mongoose/model/aggregateSale';
