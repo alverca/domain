@@ -1,4 +1,4 @@
-# Smart Theater Accounting Domain
+# Alverca Domain
 
 [![CircleCI](https://circleci.com/gh/alverca/domain.svg?style=svg)](https://circleci.com/gh/alverca/domain)
 
