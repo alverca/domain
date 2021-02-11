@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v51.0.1 - 2021-02-11
+
+### Changed
+
+- 決済方法区分がOthersの場合のみ、名称を取り込むように調整
+
 ## v51.0.0 - 2021-02-01
 
 ### Changed
