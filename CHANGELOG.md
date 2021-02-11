@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- 決済方法区分がOthersの場合のみ、名称を取り込むように調整
+
 ### Deprecated
 
 ### Removed

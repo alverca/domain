@@ -160,8 +160,13 @@ function reservation2report(params: {
     }
 
     let paymentMethodName = '';
+    // 決済方法区分がOthersの場合のみ、名称を取り込む
     if (Array.isArray(order.paymentMethods) && order.paymentMethods.length > 0) {
-        paymentMethodName = order.paymentMethods[0].name;
+        if (order.paymentMethods[0].typeOf === 'Others') {
+            paymentMethodName = order.paymentMethods[0].name;
+        } else {
+            paymentMethodName = order.paymentMethods[0].typeOf;
+        }
     }
 
     const locale = (typeof order.customer.address === 'string') ? order.customer.address : '';
