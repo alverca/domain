@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- 売上レポートを予約以外の注文アイテムに対応
+
 ### Deprecated
 
 ### Removed

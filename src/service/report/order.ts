@@ -29,21 +29,38 @@ function getUnitPriceByAcceptedOffer(offer: cinerinoapi.factory.order.IAcceptedO
     return unitPrice;
 }
 
-function getSortBy(order: cinerinoapi.factory.order.IOrder, reservation: cinerinoapi.factory.order.IReservation, status: string) {
-    const seatNumber = reservation.reservedTicket.ticketedSeat?.seatNumber;
-
-    return util.format(
-        '%s:%s:%s:%s',
-        `00000000000000000000${moment(reservation.reservationFor.startDate)
+function getSortBy(order: cinerinoapi.factory.order.IOrder, orderItem: cinerinoapi.factory.order.IItemOffered, status: string) {
+    let sortBy: string = util.format(
+        '%s:%s:%s',
+        `00000000000000000000${moment(order.orderDate)
             .unix()}`
             // tslint:disable-next-line:no-magic-numbers
             .slice(-20),
         `00000000000000000000${order.confirmationNumber}`
             // tslint:disable-next-line:no-magic-numbers
             .slice(-20),
-        status,
-        (typeof seatNumber === 'string') ? seatNumber : reservation.id
+        status
     );
+
+    if (orderItem.typeOf === cinerinoapi.factory.chevre.reservationType.EventReservation) {
+        const seatNumber = (<cinerinoapi.factory.order.IReservation>orderItem).reservedTicket.ticketedSeat?.seatNumber;
+
+        sortBy = util.format(
+            '%s:%s:%s:%s',
+            `00000000000000000000${moment((<cinerinoapi.factory.order.IReservation>orderItem).reservationFor.startDate)
+                .unix()}`
+                // tslint:disable-next-line:no-magic-numbers
+                .slice(-20),
+            `00000000000000000000${order.confirmationNumber}`
+                // tslint:disable-next-line:no-magic-numbers
+                .slice(-20),
+            status,
+            (typeof seatNumber === 'string') ? seatNumber : (<cinerinoapi.factory.order.IReservation>orderItem).id
+        );
+
+    }
+
+    return sortBy;
 }
 
 /**
@@ -144,7 +161,7 @@ export function createRefundOrderReport(params: {
 // tslint:disable-next-line:cyclomatic-complexity max-func-body-length
 function reservation2report(params: {
     category: factory.report.order.ReportCategory;
-    r: factory.chevre.reservation.IReservation<factory.chevre.reservationType.EventReservation>;
+    r: cinerinoapi.factory.order.IItemOffered;
     unitPrice: number;
     order: cinerinoapi.factory.order.IOrder;
     paymentSeatIndex?: number;
@@ -172,16 +189,76 @@ function reservation2report(params: {
     const locale = (typeof order.customer.address === 'string') ? order.customer.address : '';
     const gender = (typeof order.customer.gender === 'string') ? order.customer.gender : '';
     const customerSegment = (locale !== '' ? locale : '__') + (age !== '' ? age : '__') + (gender !== '' ? gender : '_');
+    const customerGroup: string = order2customerGroup(order);
+    let amount: number = Number(order.price);
 
-    let csvCode = params.r.reservedTicket.ticketType.additionalProperty?.find((p) => p.name === 'csvCode')?.value;
-    if (typeof csvCode !== 'string') {
-        csvCode = '';
+    const customer: factory.report.order.ICustomer = {
+        group: customerGroup2reportString({ group: customerGroup }),
+        givenName: (typeof order.customer.givenName === 'string') ? order.customer.givenName : '',
+        familyName: (typeof order.customer.familyName === 'string') ? order.customer.familyName : '',
+        email: (typeof order.customer.email === 'string') ? order.customer.email : '',
+        telephone: (typeof order.customer.telephone === 'string') ? order.customer.telephone : '',
+        segment: customerSegment,
+        username: username
+    };
+
+    const paymentMethod: string = paymentMethodName2reportString({ name: paymentMethodName });
+
+    const mainEntity: factory.report.order.IMainEntity = {
+        confirmationNumber: order.confirmationNumber,
+        customer: customer,
+        orderDate: moment(order.orderDate)
+            .toDate(),
+        orderNumber: order.orderNumber,
+        paymentMethod: paymentMethod,
+        price: order.price,
+        typeOf: order.typeOf
+    };
+
+    let csvCode = '';
+    let seatNumber: string | undefined;
+    let reservation: factory.report.order.IReservation = {
+        id: '',
+        reservationFor: {
+            id: '',
+            startDate: moment(order.orderDate)
+                .toDate()
+        }
+    };
+
+    if (params.r.typeOf === cinerinoapi.factory.chevre.reservationType.EventReservation) {
+        const reservationByOrder = <cinerinoapi.factory.order.IReservation>params.r;
+
+        // 注文アイテムが予約の場合
+        const csvCodeByOrder = reservationByOrder.reservedTicket.ticketType.additionalProperty?.find(
+            (p) => p.name === 'csvCode'
+        )?.value;
+        if (typeof csvCodeByOrder === 'string') {
+            csvCode = csvCodeByOrder;
+        }
+
+        seatNumber = reservationByOrder.reservedTicket.ticketedSeat?.seatNumber;
+
+        reservation = {
+            id: reservationByOrder.id,
+            reservationFor: {
+                id: reservationByOrder.reservationFor.id,
+                startDate: moment(reservationByOrder.reservationFor.startDate)
+                    .toDate()
+            },
+            reservedTicket: {
+                ticketType: {
+                    csvCode,
+                    name: <any>reservationByOrder.reservedTicket.ticketType.name,
+                    ...(typeof params.unitPrice === 'number')
+                        ? { priceSpecification: { price: params.unitPrice } }
+                        : undefined
+                },
+                ticketedSeat: (typeof seatNumber === 'string') ? { seatNumber } : undefined
+            }
+        };
     }
 
-    const customerGroup: string = order2customerGroup(order);
-    const seatNumber = params.r.reservedTicket.ticketedSeat?.seatNumber;
-
-    let amount: number = Number(order.price);
     let sortBy: string;
     switch (params.category) {
         case factory.report.order.ReportCategory.CancellationFee:
@@ -209,48 +286,6 @@ function reservation2report(params: {
         default:
             throw new Error(`category ${params.category} not implemented`);
     }
-
-    const customer: factory.report.order.ICustomer = {
-        group: customerGroup2reportString({ group: customerGroup }),
-        givenName: (typeof order.customer.givenName === 'string') ? order.customer.givenName : '',
-        familyName: (typeof order.customer.familyName === 'string') ? order.customer.familyName : '',
-        email: (typeof order.customer.email === 'string') ? order.customer.email : '',
-        telephone: (typeof order.customer.telephone === 'string') ? order.customer.telephone : '',
-        segment: customerSegment,
-        username: username
-    };
-
-    const paymentMethod: string = paymentMethodName2reportString({ name: paymentMethodName });
-
-    const mainEntity: factory.report.order.IMainEntity = {
-        confirmationNumber: order.confirmationNumber,
-        customer: customer,
-        orderDate: moment(order.orderDate)
-            .toDate(),
-        orderNumber: order.orderNumber,
-        paymentMethod: paymentMethod,
-        price: order.price,
-        typeOf: order.typeOf
-    };
-
-    const reservation: factory.report.order.IReservation = {
-        id: params.r.id,
-        reservationFor: {
-            id: params.r.reservationFor.id,
-            startDate: moment(params.r.reservationFor.startDate)
-                .toDate()
-        },
-        reservedTicket: {
-            ticketType: {
-                csvCode,
-                name: <any>params.r.reservedTicket.ticketType.name,
-                ...(typeof params.unitPrice === 'number')
-                    ? { priceSpecification: { price: params.unitPrice } }
-                    : undefined
-            },
-            ticketedSeat: (typeof seatNumber === 'string') ? { seatNumber } : undefined
-        }
-    };
 
     return {
         amount: amount,
