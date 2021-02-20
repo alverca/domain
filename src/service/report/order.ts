@@ -75,12 +75,13 @@ export function createOrderReport(params: {
         switch (params.order.orderStatus) {
             case cinerinoapi.factory.orderStatus.OrderProcessing:
                 datas = params.order.acceptedOffers
+                    .filter((o) => o.itemOffered.typeOf === cinerinoapi.factory.chevre.reservationType.EventReservation)
                     .map((o, index) => {
                         const unitPrice = getUnitPriceByAcceptedOffer(o);
 
                         return reservation2report({
                             category: factory.report.order.ReportCategory.Reserved,
-                            r: <cinerinoapi.factory.order.IReservation>o.itemOffered,
+                            r: o.itemOffered,
                             unitPrice: unitPrice,
                             order: params.order,
                             paymentSeatIndex: index,
@@ -96,12 +97,13 @@ export function createOrderReport(params: {
 
             case cinerinoapi.factory.orderStatus.OrderReturned:
                 datas = params.order.acceptedOffers
+                    .filter((o) => o.itemOffered.typeOf === cinerinoapi.factory.chevre.reservationType.EventReservation)
                     .map((o, index) => {
                         const unitPrice = getUnitPriceByAcceptedOffer(o);
 
                         return reservation2report({
                             category: factory.report.order.ReportCategory.Cancelled,
-                            r: <cinerinoapi.factory.order.IReservation>o.itemOffered,
+                            r: o.itemOffered,
                             unitPrice: unitPrice,
                             order: params.order,
                             paymentSeatIndex: index,
@@ -129,15 +131,16 @@ export function createRefundOrderReport(params: {
 }) {
     return async (repos: { report: ReportRepo }): Promise<void> => {
         const datas: factory.report.order.IReport[] = [];
-        if (params.order.acceptedOffers.length > 0) {
-            const acceptedOffer = params.order.acceptedOffers[0];
-            const r = <cinerinoapi.factory.order.IReservation>acceptedOffer.itemOffered;
+        const acceptedOffers = params.order.acceptedOffers
+            .filter((o) => o.itemOffered.typeOf === cinerinoapi.factory.chevre.reservationType.EventReservation);
+        if (acceptedOffers.length > 0) {
+            const acceptedOffer = acceptedOffers[0];
             const unitPrice = getUnitPriceByAcceptedOffer(acceptedOffer);
 
             datas.push({
                 ...reservation2report({
                     category: factory.report.order.ReportCategory.CancellationFee,
-                    r: r,
+                    r: acceptedOffer.itemOffered,
                     unitPrice: unitPrice,
                     order: params.order,
                     // 返品手数料行にはpayment_seat_indexなし
