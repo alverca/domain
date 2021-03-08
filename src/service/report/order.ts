@@ -178,6 +178,13 @@ function reservation2report(params: {
     if (typeof order.customer.memberOf?.membershipNumber === 'string') {
         username = order.customer.memberOf.membershipNumber;
     }
+    // order.brokerを参照するように変更
+    if (Array.isArray(order.broker?.identifier)) {
+        const usernameByBroker = order.broker?.identifier.find((p) => p.name === 'username')?.value;
+        if (typeof usernameByBroker === 'string') {
+            username = usernameByBroker;
+        }
+    }
 
     let paymentMethodName = '';
     // 決済方法区分がOthersの場合のみ、名称を取り込む
