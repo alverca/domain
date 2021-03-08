@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@alverca/factory": "34.0.1",
-    "@cinerino/sdk": "1.20.4",
+    "@cinerino/sdk": "1.20.5",
     "debug": "^3.2.6",
     "http-status": "^1.4.2",
     "moment": "^2.24.0",
@@ -82,5 +82,5 @@
     "postversion": "git push origin --tags",
     "prepublishOnly": "npm run clean && npm run build"
   },
-  "version": "51.0.1"
+  "version": "51.1.0"
 }

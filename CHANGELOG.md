@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v51.1.0 - 2021-03-08
+
+### Changed
+
+- 売上レポートを予約以外の注文アイテムに対応
+- 売上レポートのusernameを注文のbrokerに対応
+
 ## v51.0.1 - 2021-02-11
 
 ### Changed
