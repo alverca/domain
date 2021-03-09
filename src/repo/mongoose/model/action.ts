@@ -7,6 +7,10 @@ const writeConcern: mongoose.WriteConcern = { j: true, w: 'majority', wtimeout: 
  */
 const schema = new mongoose.Schema(
     {
+        actionStatus: String,
+        typeOf: String,
+        startDate: Date,
+        endDate: Date
     },
     {
         collection: 'actions',
