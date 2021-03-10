@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Removed
 
+- 売上レポートサービスを削除(api側へソース移行)
+
 ### Fixed
 
 ### Security
