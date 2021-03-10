@@ -10,12 +10,9 @@
   ],
   "dependencies": {
     "@alverca/factory": "34.0.1",
-    "@cinerino/sdk": "1.20.5",
     "debug": "^3.2.6",
-    "http-status": "^1.4.2",
     "moment": "^2.24.0",
-    "moment-timezone": "^0.5.26",
-    "request": "^2.88.2"
+    "moment-timezone": "^0.5.26"
   },
   "description": "Alverca Domain Library for Node.js",
   "devDependencies": {
@@ -26,7 +23,6 @@
     "@types/mongoose": "^5.5.11",
     "@types/node": "^8.10.66",
     "@types/power-assert": "^1.5.0",
-    "@types/request": "^2.48.5",
     "@types/sinon": "^4.3.3",
     "@types/sinon-mongoose": "^1.3.9",
     "mocha": "^3.5.3",

@@ -88,6 +88,16 @@ schema.index(
 );
 
 schema.index(
+    { 'mainEntity.orderNumber': 1, sortBy: 1 },
+    {
+        name: 'searchByMainEntityOrderNumber',
+        partialFilterExpression: {
+            'mainEntity.orderNumber': { $exists: true }
+        }
+    }
+);
+
+schema.index(
     { 'reservation.id': 1, sortBy: 1 },
     {
         name: 'searchByReservationId-v2',
