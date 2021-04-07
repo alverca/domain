@@ -53,6 +53,90 @@ schema.index(
     }
 );
 
+schema.index(
+    { 'project.id': 1, orderDate: -1 },
+    {
+        name: 'searchByProjectId'
+    }
+);
+
+schema.index(
+    { 'seller.id': 1, orderDate: -1 },
+    {
+        name: 'searchBySellerId',
+        partialFilterExpression: {
+            'seller.id': { $exists: true }
+        }
+    }
+);
+
+schema.index(
+    { orderStatus: 1, orderDate: -1 },
+    {
+        name: 'searchByOrderStatus'
+    }
+);
+
+schema.index(
+    { confirmationNumber: 1, orderDate: -1 },
+    {
+        name: 'searchByConfirmationNumber',
+        partialFilterExpression: {
+            confirmationNumber: { $exists: true }
+        }
+    }
+);
+
+schema.index(
+    { 'customer.id': 1, orderDate: -1 },
+    {
+        name: 'searchByCustomerId',
+        partialFilterExpression: {
+            'customer.id': { $exists: true }
+        }
+    }
+);
+
+schema.index(
+    { 'paymentMethods.accountId': 1, orderDate: -1 },
+    {
+        name: 'searchByPaymentMethodsAccountId',
+        partialFilterExpression: {
+            'paymentMethods.accountId': { $exists: true }
+        }
+    }
+);
+
+schema.index(
+    { 'paymentMethods.typeOf': 1, orderDate: -1 },
+    {
+        name: 'searchByPaymentMethodTypeOf',
+        partialFilterExpression: {
+            'paymentMethods.typeOf': { $exists: true }
+        }
+    }
+);
+
+schema.index(
+    { 'paymentMethods.paymentMethodId': 1, orderDate: -1 },
+    {
+        name: 'searchByPaymentMethodId',
+        partialFilterExpression: {
+            'paymentMethods.paymentMethodId': { $exists: true }
+        }
+    }
+);
+
+schema.index(
+    { 'acceptedOffers.itemOffered.reservationFor.startDate': 1, orderDate: -1 },
+    {
+        name: 'searchByItemOfferedReservationForStartDate',
+        partialFilterExpression: {
+            'acceptedOffers.itemOffered.reservationFor.startDate': { $exists: true }
+        }
+    }
+);
+
 mongoose.model(modelName, schema)
     .on(
         'index',
