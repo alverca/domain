@@ -2,9 +2,15 @@
 /**
  * リポジトリ
  */
+import { MongoRepository as AccountingReportRepo } from './repo/accountingReport';
 import { MongoRepository as ActionRepo } from './repo/action';
 import { MongoRepository as OrderRepo } from './repo/order';
 import { MongoRepository as ReportRepo } from './repo/report';
+
+/**
+ * 経理レポートリポジトリ
+ */
+export class AccountingReport extends AccountingReportRepo { }
 
 /**
  * アクションリポジトリ

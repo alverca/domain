@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - 注文リポジトリを追加
+- 経理レポートリポジトリを追加
 
 ### Changed
 
